@@ -1,4 +1,4 @@
-class CreateLinks < ActiveRecord::Migration[5.0]
+class CreateLinks < ActiveRecord::Migration[7.1]
   def change
     create_table :links do |t|
       t.string :short_name, null: false

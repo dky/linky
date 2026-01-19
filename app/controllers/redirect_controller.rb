@@ -8,7 +8,7 @@ class RedirectController < ApplicationController
 
     @short = short
 
-    link = Link.find_by_short_name( short )
+    link = Link.find_by(short_name: short)
 
     if link
       link.clicks += 1

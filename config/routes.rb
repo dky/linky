@@ -6,6 +6,6 @@ Rails.application.routes.draw do
 
   root to: 'links#index'
 
-  match '*path' => 'redirect#index', via: [:get]
+  get '*path', to: 'redirect#index'
 
 end
