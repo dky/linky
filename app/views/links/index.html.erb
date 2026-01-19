@@ -1,27 +1,30 @@
-<p id="notice"><%= notice %></p>
+<% if notice.present? %>
+  <div class="flash-notice"><%= notice %></div>
+<% end %>
 
-<%= will_paginate @links %>
-
-<table class="table">
-  <tr>
-    <th>Short Link</th>
-    <th>Url</th>
-    <th>Visits</th>
-  </tr>
-
-  <% @links.each do |link| %>
+<table class="links-table">
+  <thead>
     <tr>
-      <td>
-        <%= link_to( "/#{link.short_name}", link_path(link.id) ) %>
-      </td>
-      <td>
-        <%= link_to( truncate(link.url), link.url, title: link.url )%>
-      </td>
-      <td>
-        <%= number_with_delimiter link.clicks %>
-      </td>
+      <th>Short Link</th>
+      <th>Destination</th>
+      <th style="text-align: right">Visits</th>
     </tr>
-  <% end %>
+  </thead>
+  <tbody>
+    <% @links.each do |link| %>
+      <tr>
+        <td>
+          <%= link_to "/#{link.short_name}", link_path(link.id), class: "short-link" %>
+        </td>
+        <td class="url">
+          <%= link_to truncate(link.url, length: 60), link.url, title: link.url %>
+        </td>
+        <td class="visits">
+          <%= number_with_delimiter link.clicks %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 
 <%= will_paginate @links %>
