@@ -13,7 +13,7 @@ class RedirectController < ApplicationController
     if link
       link.clicks += 1
       link.save
-      redirect_to construct_url(link, param)
+      redirect_to construct_url(link, param), allow_other_host: true
     end
 
   end
