@@ -1,6 +1,9 @@
 # Build stage
 FROM ruby:3.2 AS builder
 
+ARG GIT_COMMIT=unknown
+ARG BUILD_DATE=unknown
+
 # Install Node.js and Yarn for asset compilation
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
@@ -20,6 +23,11 @@ RUN gem update --system && gem install bundler && \
 
 # Copy app and install JS dependencies
 COPY . .
+
+# Create build info file
+RUN echo "commit: ${GIT_COMMIT}" > public/BUILD_INFO && \
+    echo "built: ${BUILD_DATE}" >> public/BUILD_INFO
+
 RUN yarn install && \
     SECRET_KEY_BASE=dummy bundle exec rails assets:precompile && \
     rm -rf node_modules tmp/cache vendor/bundle/ruby/*/cache
