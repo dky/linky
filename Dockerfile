@@ -4,7 +4,7 @@ FROM ruby:3.2 AS builder
 # Install Node.js and Yarn for asset compilation
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g yarn && \
+    corepack enable && \
     rm -rf /var/lib/apt/lists/*
 
 ENV APP_HOME=/webapp
