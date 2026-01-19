@@ -1,32 +1,46 @@
-# This docker file sets up the rails app container
-#
-# https://docs.docker.com/reference/builder/
-
-FROM ruby:3.2
+# Build stage
+FROM ruby:3.2 AS builder
 
 # Install Node.js and Yarn for asset compilation
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g yarn
+    npm install -g yarn && \
+    rm -rf /var/lib/apt/lists/*
 
-# Add env variables
+ENV APP_HOME=/webapp
+ENV RAILS_ENV=production
+WORKDIR $APP_HOME
+
+# Install gems first (better layer caching)
+COPY Gemfile Gemfile.lock ./
+RUN gem update --system && gem install bundler && \
+    bundle config set --local without 'development test' && \
+    bundle install --jobs 4 && \
+    rm -rf ~/.bundle/cache
+
+# Install JS dependencies
+COPY package.json yarn.lock* ./
+RUN yarn install --frozen-lockfile
+
+# Copy app and compile assets
+COPY . .
+RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile && \
+    rm -rf node_modules tmp/cache vendor/bundle/ruby/*/cache
+
+# Runtime stage
+FROM ruby:3.2-slim
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libpq5 && \
+    rm -rf /var/lib/apt/lists/*
+
 ENV PORT=80
 ENV APP_HOME=/webapp
 ENV RAILS_ENV=production
-
-# switch to the application directory for exec commands
 WORKDIR $APP_HOME
 
-# Add the app
-ADD . $APP_HOME
+# Copy gems and app from builder
+COPY --from=builder /usr/local/bundle /usr/local/bundle
+COPY --from=builder $APP_HOME $APP_HOME
 
-RUN gem update --system && gem install bundler
-
-RUN bundle install
-
-# Install JS dependencies and build assets
-RUN yarn install
-RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
-
-# Run the app
 CMD ["/bin/sh", "-c", "SECRET_KEY_BASE=$(bundle exec rails secret) bundle exec rails s -b 0.0.0.0 -p $PORT"]
