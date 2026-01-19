@@ -13,7 +13,6 @@ gem 'jsbundling-rails'
 
 # Bootstrap 5 & Icons
 gem 'bootstrap', '~> 5.3'
-gem 'font-awesome-sass', '~> 6.5'
 
 # Forms & Pagination
 gem 'simple_form', '~> 5.3'

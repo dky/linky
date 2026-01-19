@@ -2,6 +2,7 @@
   "name": "linky",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.0",
     "@hotwired/turbo-rails": "^8.0.0",
     "bootstrap": "^5.3.0",
     "@popperjs/core": "^2.11.0",
