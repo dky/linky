@@ -12,7 +12,7 @@ ENV RAILS_ENV=production
 WORKDIR $APP_HOME
 
 # Install gems first (better layer caching)
-COPY Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock* ./
 RUN gem update --system && gem install bundler && \
     bundle config set --local without 'development test' && \
     bundle install --jobs 4 && \
