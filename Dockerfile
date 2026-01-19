@@ -18,13 +18,10 @@ RUN gem update --system && gem install bundler && \
     bundle install --jobs 4 && \
     rm -rf ~/.bundle/cache
 
-# Install JS dependencies
-COPY package.json yarn.lock* ./
-RUN yarn install --frozen-lockfile
-
-# Copy app and compile assets
+# Copy app and install JS dependencies
 COPY . .
-RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile && \
+RUN yarn install && \
+    SECRET_KEY_BASE=dummy bundle exec rails assets:precompile && \
     rm -rf node_modules tmp/cache vendor/bundle/ruby/*/cache
 
 # Runtime stage
