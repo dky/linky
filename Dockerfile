@@ -29,4 +29,4 @@ RUN yarn install
 RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
 
 # Run the app
-CMD SECRET_KEY_BASE=$(bundle exec rails secret) bundle exec rails s -b 0.0.0.0 -p $PORT
+CMD ["/bin/sh", "-c", "SECRET_KEY_BASE=$(bundle exec rails secret) bundle exec rails s -b 0.0.0.0 -p $PORT"]
